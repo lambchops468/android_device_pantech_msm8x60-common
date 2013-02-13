@@ -1,3 +1,4 @@
+#
 # Copyright (C) 2012 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,7 +14,7 @@
 # limitations under the License.
 #
 
-USE_CAMERA_STUB := true
+BOARD_VENDOR := pantech
 
 #----------------------------------------------------------------------
 
@@ -34,6 +35,7 @@ TARGET_PROVIDES_LIBAUDIO := false
 # Board info
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_HAS_LARGE_FILESYSTEM := true
+BOARD_PERSISTIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_USES_MMCUTILS := true
 
 # Bootloader
@@ -47,15 +49,13 @@ BOARD_CHARGER_RES := device/pantech/qcom-common/charger/res/images/charger
 COMMON_GLOBAL_CFLAGS += -DQCOM_HARDWARE
 
 # Graphics
+BOARD_EGL_CFG := device/pantech/qcom-common/prebuilt/system/lib/egl/egl.cfg
 TARGET_USES_C2D_COMPOSITION := true
 TARGET_USES_ION := true
 USE_OPENGL_RENDERER := true
 
 # Kernel
 TARGET_NO_KERNEL := false
-
-# Overlay
-TARGET_USES_OVERLAY := true
 
 # Postrecovery
 PRODUCT_COPY_FILES += \
@@ -70,10 +70,7 @@ TARGET_RECOVERY_UI_LIB := librecovery_ui_qcom
 
 # Target info
 TARGET_USERIMAGES_USE_EXT4 := true
-BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
-BOARD_PERSISTIMAGE_FILE_SYSTEM_TYPE := ext4
 
 # Webkit
 ENABLE_WEBGL := true
 TARGET_FORCE_CPU_UPLOAD := true
-

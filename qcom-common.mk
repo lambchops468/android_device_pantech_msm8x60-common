@@ -16,43 +16,6 @@
 
 #----------------------------------------------------------------------
 
-# Bugmailer
-PRODUCT_COPY_FILES += \
-    system/extras/bugmailer/bugmailer.sh:system/bin/bugmailer.sh \
-    system/extras/bugmailer/send_bug:system/bin/send_bug
-
-# Common overlay
-DEVICE_PACKAGE_OVERLAYS += device/pantech/qcom-common/overlay
-
-# Filesystem management tools
-PRODUCT_PACKAGES += \
-    make_ext4fs \
-    setup_fs
-
-# Permissions
-PRODUCT_COPY_FILES += \
-    frameworks/native/data/etc/android.hardware.camera.flash-autofocus.xml:system/etc/permissions/android.hardware.camera.flash-autofocus.xml \
-    frameworks/native/data/etc/android.hardware.camera.front.xml:system/etc/permissions/android.hardware.camera.front.xml \
-    frameworks/native/data/etc/android.hardware.location.gps.xml:system/etc/permissions/android.hardware.location.gps.xml \
-    frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
-    frameworks/native/data/etc/android.hardware.wifi.xml:system/etc/permissions/android.hardware.wifi.xml \
-    frameworks/native/data/etc/android.hardware.wifi.direct.xml:system/etc/permissions/android.hardware.wifi.direct.xml \
-    frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml \
-    frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
-    frameworks/native/data/etc/android.hardware.sensor.proximity.xml:system/etc/permissions/android.hardware.sensor.proximity.xml \
-    frameworks/native/data/etc/android.hardware.sensor.light.xml:system/etc/permissions/android.hardware.sensor.light.xml \
-    frameworks/native/data/etc/android.hardware.sensor.gyroscope.xml:system/etc/permissions/android.hardware.sensor.gyroscope.xml \
-    frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml \
-    frameworks/native/data/etc/android.hardware.usb.host.xml:system/etc/permissions/android.hardware.usb.host.xml \
-    packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml
-
-# Postrecoveryboot
-PRODUCT_COPY_FILES += \
-    device/pantech/qcom-common/recovery/postrecoveryboot.sh:recovery/root/sbin/postrecoveryboot.sh \
-    device/pantech/qcom-common/recovery/postrecoveryboot.sh:recovery/system/bin/postrecoveryboot.sh
-
-#----------------------------------------------------------------------
-
 # Below projects/packages with LOCAL_MODULEs will be used by
 # PRODUCT_PACKAGES to build LOCAL_MODULEs that are tagged with
 # optional tag, which will not be available on target unless
@@ -65,12 +28,14 @@ PRODUCT_PACKAGES += libangle
 #AUDIO_HARDWARE
 PRODUCT_PACKAGES += \
     audio.primary.msm8660 \
+    audio.primary.msm8960 \
     audio.a2dp.default \
     audio.usb.default
 
 #AUDIO_POLICY
 PRODUCT_PACKAGES += \
     audio_policy.msm8660 \
+    audio_policy.msm8960 \
     audio_policy.conf
 
 #AMPLOADER
@@ -166,10 +131,7 @@ PRODUCT_PACKAGES += \
     init.qcom.efs.sync.sh \
     ueventd.qcom.rc \
     init.ath3k.bt.sh \
-    init.qcom.audio.sh \
-    init.qcom.mpq.sh \
-    init.qcom.wifi.rps.sh \
-    init.qcom.wifi.unload.sh
+    init.qcom.audio.sh
 
 #IPROUTE2
 PRODUCT_PACKAGES += \
@@ -270,17 +232,7 @@ PRODUCT_PACKAGES += \
     libOmxEvrcEnc \
     libOmxMp3Dec \
     libOmxQcelp13Enc \
-    libOmxAc3HwDec \
-    mm-adec-omxaac-test \
-    mm-adec-omxmp3-test \
-    mm-aenc-omxaac-test \
-    mm-aenc-omxamr-test \
-    mm-aenc-omxevrc-test \
-    mm-aenc-omxqcelp13-test \
-    sw-adec-omxaac-test \
-    sw-adec-omxamr-test \
-    sw-adec-omxamrwb-test \
-    sw-adec-omxmp3-test
+    libOmxAc3HwDec
 
 #MM_CORE
 PRODUCT_PACKAGES += \
@@ -380,6 +332,11 @@ PRODUCT_PACKAGES += \
     minigzip \
     libunz
 
+#Charger
+PRODUCT_PACKAGES += \
+    charger \
+    charger_res_images
+
 #VT_JNI
 #PRODUCT_PACKAGES += libvt_jni
 
@@ -387,11 +344,9 @@ PRODUCT_PACKAGES += \
 
 # Bugmailer
 PRODUCT_PACKAGES += send_bug
-
-#Charger
-PRODUCT_PACKAGES += \
-    charger_res_images \
-    charger
+PRODUCT_COPY_FILES += \
+    system/extras/bugmailer/bugmailer.sh:system/bin/bugmailer.sh \
+    system/extras/bugmailer/send_bug:system/bin/send_bug
 
 # Live Wallpapers
 PRODUCT_PACKAGES += \
@@ -399,6 +354,34 @@ PRODUCT_PACKAGES += \
     LiveWallpapersPicker \
     VisualizationWallpapers \
     librs_jni
+
+# Filesystem management tools
+PRODUCT_PACKAGES += \
+    make_ext4fs \
+    setup_fs
+
+# Permissions
+PRODUCT_COPY_FILES += \
+    frameworks/native/data/etc/android.hardware.camera.flash-autofocus.xml:system/etc/permissions/android.hardware.camera.flash-autofocus.xml \
+    frameworks/native/data/etc/android.hardware.camera.front.xml:system/etc/permissions/android.hardware.camera.front.xml \
+    frameworks/native/data/etc/android.hardware.location.gps.xml:system/etc/permissions/android.hardware.location.gps.xml \
+    frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
+    frameworks/native/data/etc/android.hardware.wifi.xml:system/etc/permissions/android.hardware.wifi.xml \
+    frameworks/native/data/etc/android.hardware.wifi.direct.xml:system/etc/permissions/android.hardware.wifi.direct.xml \
+    frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml \
+    frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
+    frameworks/native/data/etc/android.hardware.sensor.proximity.xml:system/etc/permissions/android.hardware.sensor.proximity.xml \
+    frameworks/native/data/etc/android.hardware.sensor.light.xml:system/etc/permissions/android.hardware.sensor.light.xml \
+    frameworks/native/data/etc/android.hardware.sensor.gyroscope.xml:system/etc/permissions/android.hardware.sensor.gyroscope.xml \
+    frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml \
+    frameworks/native/data/etc/android.hardware.usb.host.xml:system/etc/permissions/android.hardware.usb.host.xml \
+    packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml
+
+# Postrecoveryboot
+PRODUCT_COPY_FILES += \
+    device/pantech/qcom-common/recovery/postrecoveryboot.sh:recovery/root/sbin/postrecoveryboot.sh \
+    device/pantech/qcom-common/recovery/postrecoveryboot.sh:recovery/system/bin/postrecoveryboot.sh
+
 
 # Torch
 PRODUCT_PACKAGES += \
@@ -415,6 +398,9 @@ PRODUCT_PACKAGES += \
 
 #----------------------------------------------------------------------
 
+# Overlays
+DEVICE_PACKAGE_OVERLAYS += device/pantech/qcom-common/overlay
+
 # Propertys spacific for this device
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.vendor.extension_library=/system/lib/libqc-opt.so
@@ -422,4 +408,3 @@ PRODUCT_PROPERTY_OVERRIDES += \
 #----------------------------------------------------------------------
 
 $(call inherit-product, frameworks/native/build/phone-xhdpi-1024-dalvik-heap.mk)
-
