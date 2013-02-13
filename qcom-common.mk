@@ -382,7 +382,6 @@ PRODUCT_COPY_FILES += \
     device/pantech/qcom-common/recovery/postrecoveryboot.sh:recovery/root/sbin/postrecoveryboot.sh \
     device/pantech/qcom-common/recovery/postrecoveryboot.sh:recovery/system/bin/postrecoveryboot.sh
 
-
 # Torch
 PRODUCT_PACKAGES += \
     Apollo \
