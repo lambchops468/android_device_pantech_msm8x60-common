@@ -60,10 +60,8 @@ USE_OPENGL_RENDERER := true
 # Kernel
 TARGET_NO_KERNEL := false
 
-# Postrecovery
-PRODUCT_COPY_FILES += \
-    device/pantech/qcom-common/recovery/postrecoveryboot.sh:recovery/root/sbin/postrecoveryboot.sh \
-    device/pantech/qcom-common/recovery/postrecoveryboot.sh:recovery/system/bin/postrecoveryboot.sh
+# Liblights on QCOM platforms
+TARGET_PROVIDES_LIBLIGHTS := true
 
 # QCOM hardware
 BOARD_USES_QCOM_HARDWARE := true
