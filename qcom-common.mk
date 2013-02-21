@@ -227,7 +227,8 @@ PRODUCT_PACKAGES += media_profiles.xml
 
 #MM_AUDIO
 PRODUCT_PACKAGES += \
-    libOmxAacEnc \
+    libOmxAacDec \
+	libOmxAacEnc \
     libOmxAmrEnc \
     libOmxEvrcEnc \
     libOmxMp3Dec \

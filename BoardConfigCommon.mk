@@ -14,13 +14,13 @@
 # limitations under the License.
 #
 
+#----------------------------------------------------------------------
+
 BOARD_VENDOR := pantech
 
 #----------------------------------------------------------------------
 
 # Architecture
-TARGET_GLOBAL_CFLAGS += -mfpu=neon -mfloat-abi=softfp
-TARGET_GLOBAL_CPPFLAGS += -mfpu=neon -mfloat-abi=softfp
 TARGET_ARCH := arm
 TARGET_ARCH_VARIANT := armv7-a-neon
 TARGET_CPU_ABI  := armeabi-v7a
@@ -63,8 +63,12 @@ TARGET_NO_KERNEL := false
 # Liblights on QCOM platforms
 TARGET_PROVIDES_LIBLIGHTS := true
 
+# PowerHAL
+#TARGET_PROVIDES_POWERHAL := true
+
 # QCOM hardware
 BOARD_USES_QCOM_HARDWARE := true
+BOARD_USES_QCOM_LIBS := true
 
 # Recovery
 TARGET_RECOVERY_UI_LIB := librecovery_ui_qcom
@@ -75,3 +79,4 @@ TARGET_USERIMAGES_USE_EXT4 := true
 # Webkit
 ENABLE_WEBGL := true
 TARGET_FORCE_CPU_UPLOAD := true
+
