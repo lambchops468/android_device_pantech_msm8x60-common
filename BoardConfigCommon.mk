@@ -21,32 +21,29 @@ BOARD_VENDOR := pantech
 #----------------------------------------------------------------------
 
 # Architecture
-TARGET_ARCH := arm
+TARGET_ARCH         := arm
 TARGET_ARCH_VARIANT := armv7-a-neon
-TARGET_CPU_ABI  := armeabi-v7a
-TARGET_CPU_ABI2 := armeabi
-TARGET_CPU_SMP := true
-ARCH_ARM_HAVE_TLS_REGISTER := true
+TARGET_CPU_ABI      := armeabi-v7a
+TARGET_CPU_ABI2     := armeabi
 
 # Audio
 BOARD_USES_AUDIO_LEGACY  := false
 TARGET_PROVIDES_LIBAUDIO := false
 
+# Bluetooth
+BOARD_HAVE_BLUETOOTH := true
+
 # Board info
 BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_HAS_LARGE_FILESYSTEM := true
 BOARD_PERSISTIMAGE_FILE_SYSTEM_TYPE := ext4
-BOARD_USES_MMCUTILS := true
 
-# Bluetooth
-BOARD_HAVE_BLUETOOTH := true
-
-# Bootloader
-TARGET_NO_BOOTLOADER := true
+# Charger res
+BOARD_CHARGER_RES := device/pantech/qcom-common/charger/res/images/charger
 
 # Charging mode
+BOARD_CHARGING_MODE_BOOTING_LPM := /sys/class/power_supply/battery/batt_lp_charging
 BOARD_BATTERY_DEVICE_NAME := "battery"
-BOARD_CHARGER_RES := device/pantech/qcom-common/charger/res/images/charger
 
 # Flags
 COMMON_GLOBAL_CFLAGS += -DQCOM_HARDWARE
@@ -57,26 +54,19 @@ TARGET_USES_C2D_COMPOSITION := true
 TARGET_USES_ION := true
 USE_OPENGL_RENDERER := true
 
-# Kernel
-TARGET_NO_KERNEL := false
-
-# Liblights on QCOM platforms
-TARGET_PROVIDES_LIBLIGHTS := true
-
-# PowerHAL
-#TARGET_PROVIDES_POWERHAL := true
-
 # QCOM hardware
 BOARD_USES_QCOM_HARDWARE := true
 BOARD_USES_QCOM_LIBS := true
 
 # Recovery
 TARGET_RECOVERY_UI_LIB := librecovery_ui_qcom
+TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
 
 # Target info
+TARGET_PROVIDES_LIBLIGHTS := true
+#TARGET_PROVIDES_POWERHAL := true
 TARGET_USERIMAGES_USE_EXT4 := true
 
 # Webkit
 ENABLE_WEBGL := true
 TARGET_FORCE_CPU_UPLOAD := true
-
