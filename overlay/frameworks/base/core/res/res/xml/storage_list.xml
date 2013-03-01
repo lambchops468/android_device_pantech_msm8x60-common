@@ -41,4 +41,5 @@
             android:primary="true"
             android:emulated="true"
             android:mtpReserve="100" />
+
 </StorageList>
