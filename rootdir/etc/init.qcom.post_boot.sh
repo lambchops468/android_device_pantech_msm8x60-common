@@ -306,7 +306,7 @@ chown system /sys/devices/system/cpu/cpufreq/ondemand/io_is_busy
 
 emmc_boot=`getprop ro.boot.emmc`
 case "$emmc_boot"
-    in "true")
+    in "1")
         chown system /sys/devices/platform/rs300000a7.65536/force_sync
         chown system /sys/devices/platform/rs300000a7.65536/sync_sts
         chown system /sys/devices/platform/rs300100a7.65536/force_sync
