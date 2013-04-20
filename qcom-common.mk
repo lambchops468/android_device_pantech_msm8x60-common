@@ -27,7 +27,6 @@ PRODUCT_PACKAGES += libangle
 
 #AUDIO_HARDWARE  audio.primary.msm8660 commented because presto have own
 PRODUCT_PACKAGES += \
-#    audio.primary.msm8660 \
     audio.primary.msm8960 \
     audio.a2dp.default \
     audio.usb.default
