@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# Copyright (c) 2010-2012, Code Aurora Forum. All rights reserved.
+# Copyright (c) 2010-2013, The Linux Foundation. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -10,9 +10,9 @@
 #       copyright notice, this list of conditions and the following
 #       disclaimer in the documentation and/or other materials provided
 #       with the distribution.
-#     * Neither the name of Code Aurora Forum, Inc. nor the names of its
+#     * Neither the name of The Linux Foundation nor the names of its
 #       contributors may be used to endorse or promote products derived
-#      from this software without specific prior written permission.
+#       from this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED "AS IS" AND ANY EXPRESS OR IMPLIED
 # WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
@@ -44,43 +44,36 @@ btsoc=""
 PATH=/sbin:/system/sbin:/system/bin:/system/xbin
 export PATH
 
-# Load wifi kernel module
-load_wifiKM()
+# Trigger WCNSS platform driver
+trigger_wcnss()
 {
-    # We need to make sure the WCNSS platform driver is running.
-    # The WCNSS platform driver can either be built as a loadable
-    # module or it can be built-in to the kernel.  If it is built
-    # as a loadable module it can have one of several names.  So
-    # look to see if an appropriately named kernel module is
-    # present
-    wcnssmod=`ls /system/lib/modules/wcnss*.ko` 2> /dev/null
-    case "$wcnssmod" in
+    # We need to trigger WCNSS platform driver, WCNSS driver
+    # will export a file which we must touch so that the
+    # driver knows that userspace is ready to handle firmware
+    # download requests.
+
+    # See if an appropriately named device file is present
+    wcnssnode=`ls /dev/wcnss*`
+    case "$wcnssnode" in
         *wcnss*)
-            # A kernel module is present, so load it
-            insmod $wcnssmod
+            # Before triggering wcnss, let it know that
+            # caldata is available at userspace.
+            if [ -e /data/misc/wifi/WCNSS_qcom_wlan_cal.bin ]; then
+                calparm=`ls /sys/module/wcnsscore/parameters/has_calibrated_data`
+                if [ -e $calparm ]; then
+                    echo 1 > $calparm
+                fi
+            fi
+            # There is a device file.  Write to the file
+            # so that the driver knows userspace is
+            # available for firmware download requests
+            echo 1 > $wcnssnode
             ;;
+
         *)
-            # A kernel module is not present so we assume the
-            # driver is built-in to the kernel.  If that is the
-            # case then the driver will export a file which we
-            # must touch so that the driver knows that userspace
-            # is ready to handle firmware download requests.  See
-            # if an appropriately named device file is present
-            wcnssnode=`ls /dev/wcnss*`
-            case "$wcnssnode" in
-                *wcnss*)
-                    # There is a device file.  Write to the file
-                    # so that the driver knows userspace is
-                    # available for firmware download requests
-                    echo 1 > $wcnssnode
-                    ;;
-                *)
-                    # There is not a kernel module present and
-                    # there is not a device file present, so
-                    # the driver must not be available
-                    echo "No WCNSS module or device node detected"
-                    ;;
-            esac
+            # There is not a device file present, so
+            # the driver must not be available
+            echo "No WCNSS device node detected"
             ;;
     esac
 
@@ -96,33 +89,186 @@ load_wifiKM()
 
 
 case "$target" in
-    msm8974*)
+    msm8974* | msm8226* | msm8610*)
 
-      # At first boot move cfg80211.ko module to pronto location;
-      # the default cfg80211.ko is for wcnss solution
-      if [ ! -L /system/lib/modules/cfg80211.ko ]; then
-          mv /system/lib/modules/cfg80211.ko /system/lib/modules/pronto/
+# Check whether device is plugged on the HSIC bus
+# Currently HSIC bus will be the first index
+
+    if [ -e /sys/bus/platform/drivers/msm_hsic_host ]; then
+       if [ ! -L /sys/bus/usb/devices/1-1 ]; then
+           echo msm_hsic_host > /sys/bus/platform/drivers/msm_hsic_host/unbind
+       else
+           echo auto > /sys/bus/usb/devices/1-1/power/control
+       fi
+
+       chmod 0222 /sys/bus/platform/drivers/msm_hsic_host/bind
+       chmod 0222 /sys/bus/platform/drivers/msm_hsic_host/unbind
+    fi
+
+    wlanchip=""
+
+# force ar6004 is ar6004_wlan.conf existed.
+    if [ -f /system/etc/firmware/ath6k/AR6004/ar6004_wlan.conf ]; then
+        wlanchip=`cat /system/etc/firmware/ath6k/AR6004/ar6004_wlan.conf`
+    fi
+
+# auto detect ar6004-sdio card
+# for ar6004-sdio card, the vendor id and device id is as the following
+# vendor id  device id
+#    0x0271     0x0400
+#    0x0271     0x0401
+    if [ "$wlanchip" == "" ]; then
+        sdio_vendors=`echo \`cat /sys/bus/mmc/devices/*/*/vendor\``
+        sdio_devices=`echo \`cat /sys/bus/mmc/devices/*/*/device\``
+        ven_idx=0
+
+        for vendor in $sdio_vendors; do
+            case "$vendor" in
+            "0x0271")
+                dev_idx=0
+                for device in $sdio_devices; do
+                    if [ $ven_idx -eq $dev_idx ]; then
+                        case "$device" in
+                        "0x0400" | "0x0401")
+                            wlanchip="AR6004-SDIO"
+                            ;;
+                        *)
+                            ;;
+                        esac
+                    fi
+                    dev_idx=$(( $dev_idx + 1))
+                done
+                ;;
+            *)
+                ;;
+            esac
+            ven_idx=$(( $ven_idx + 1))
+        done
+    # auto detect ar6004-sdio card end
+    fi
+
+# for ar6004-usb card, the vendor id and device id is as the following
+# vendor id  product id
+#    0x0cf3     0x9374
+#    0x0cf3     0x9372
+    if [ "$wlanchip" == "" ]; then
+        usb_vendors=`echo \`cat /sys/bus/usb/devices/*/*/idVendor\``
+        usb_products=`echo \`cat /sys/bus/usb/devices/*/*/idProduct\``
+        ven_idx=0
+
+        for vendor in $usb_vendors; do
+            case "$vendor" in
+            "0cf3")
+                dev_idx=0
+                for product in $usb_products; do
+                    if [ $ven_idx -eq $dev_idx ]; then
+                        case "$product" in
+                        "9374" | "9372")
+                            wlanchip="AR6004-USB"
+                            ;;
+                        *)
+                            ;;
+                        esac
+                    fi
+                    dev_idx=$(( $dev_idx + 1))
+                done
+                ;;
+            *)
+                ;;
+            esac
+            ven_idx=$(( $ven_idx + 1))
+        done
+    # auto detect ar6004-usb card end
+    fi
+
+      echo "The WLAN Chip ID is $wlanchip"
+      case "$wlanchip" in
+      "AR6004-USB")
+      echo msm_hsic_host > /sys/bus/platform/drivers/msm_hsic_host/unbind
+      setprop wlan.driver.ath 2
+      setprop qcom.bluetooth.soc ath3k
+      rm  /system/lib/modules/wlan.ko
+      ln -s /system/lib/modules/ath6kl-3.5/ath6kl_usb.ko \
+		/system/lib/modules/wlan.ko
+      rm /system/etc/firmware/ath6k/AR6004/hw1.3/fw.ram.bin
+      rm /system/etc/firmware/ath6k/AR6004/hw1.3/bdata.bin
+      ln -s /system/etc/firmware/ath6k/AR6004/hw1.3/fw.ram.bin_usb \
+		/system/etc/firmware/ath6k/AR6004/hw1.3/fw.ram.bin
+      ln -s /system/etc/firmware/ath6k/AR6004/hw1.3/bdata.bin_usb \
+		/system/etc/firmware/ath6k/AR6004/hw1.3/bdata.bin
+      rm /system/etc/firmware/ath6k/AR6004/hw3.0/bdata.bin
+      ln -s /system/etc/firmware/ath6k/AR6004/hw3.0/bdata.bin_usb \
+                /system/etc/firmware/ath6k/AR6004/hw3.0/bdata.bin
+
+      # Use different wpa_supplicant.conf template between wcn driver
+      # and ath6kl driver
+      rm /system/etc/wifi/wpa_supplicant.conf
+      ln -s /system/etc/wifi/wpa_supplicant_ath6kl.conf \
+                /system/etc/wifi/wpa_supplicant.conf
+      ;;
+
+      "AR6004-SDIO")
+      setprop wlan.driver.ath 2
+      setprop qcom.bluetooth.soc ath3k
+      # Chown polling nodes as needed from UI running on system server
+      chmod 0664 /sys/devices/msm_sdcc.1/polling
+      chmod 0664 /sys/devices/msm_sdcc.2/polling
+      chmod 0664 /sys/devices/msm_sdcc.3/polling
+      chmod 0664 /sys/devices/msm_sdcc.4/polling
+
+      chown system system /sys/devices/msm_sdcc.1/polling
+      chown system system /sys/devices/msm_sdcc.2/polling
+      chown system system /sys/devices/msm_sdcc.3/polling
+      chown system system /sys/devices/msm_sdcc.4/polling
+
+      rm  /system/lib/modules/wlan.ko
+      ln -s /system/lib/modules/ath6kl-3.5/ath6kl_sdio.ko \
+		/system/lib/modules/wlan.ko
+      rm /system/etc/firmware/ath6k/AR6004/hw1.3/fw.ram.bin
+      rm /system/etc/firmware/ath6k/AR6004/hw1.3/bdata.bin
+      ln -s /system/etc/firmware/ath6k/AR6004/hw1.3/fw.ram.bin_sdio \
+		/system/etc/firmware/ath6k/AR6004/hw1.3/fw.ram.bin
+      ln -s /system/etc/firmware/ath6k/AR6004/hw1.3/bdata.bin_sdio \
+		/system/etc/firmware/ath6k/AR6004/hw1.3/bdata.bin
+      ln -s /system/etc/firmware/ath6k/AR6004/hw3.0/bdata.bin_sdio \
+                /system/etc/firmware/ath6k/AR6004/hw3.0/bdata.bin
+
+      # Use different wpa_supplicant.conf template between wcn driver
+      # and ath6kl driver
+      rm /system/etc/wifi/wpa_supplicant.conf
+      ln -s /system/etc/wifi/wpa_supplicant_ath6kl.conf \
+                /system/etc/wifi/wpa_supplicant.conf
+      ;;
+
+      *)
+      echo "*** WI-FI chip ID is not specified in /persist/wlan_chip_id **"
+      echo "*** Use the default WCN driver.                             **"
+      setprop wlan.driver.ath 0
+      rm  /system/lib/modules/wlan.ko
+      ln -s /system/lib/modules/pronto/pronto_wlan.ko \
+		/system/lib/modules/wlan.ko
+      # Populate the writable driver configuration file
+      if [ ! -e /data/misc/wifi/WCNSS_qcom_cfg.ini ]; then
+          cp /system/etc/wifi/WCNSS_qcom_cfg.ini \
+		/data/misc/wifi/WCNSS_qcom_cfg.ini
+          chown system:wifi /data/misc/wifi/WCNSS_qcom_cfg.ini
+          chmod 660 /data/misc/wifi/WCNSS_qcom_cfg.ini
       fi
-
-      # link pronto modules
-      rm /system/lib/modules/wlan.ko
-      rm /system/lib/modules/cfg80211.ko
-      ln -s /system/lib/modules/pronto/pronto_wlan.ko /system/lib/modules/wlan.ko
-      ln -s /system/lib/modules/pronto/cfg80211.ko /system/lib/modules/cfg80211.ko
-
-      # config files
-      rm /system/etc/firmware/wlan/prima/WCNSS_qcom_cfg.ini
-      ln -s /data/misc/wifi/WCNSS_qcom_cfg.ini /system/etc/firmware/wlan/prima/WCNSS_qcom_cfg.ini
-
-      rm /system/etc/firmware/wlan/prima/WCNSS_qcom_wlan_nv.bin
-      ln -s /persist/WCNSS_qcom_wlan_nv.bin /system/etc/firmware/wlan/prima/WCNSS_qcom_wlan_nv.bin
 
       # The property below is used in Qcom SDK for softap to determine
       # the wifi driver config file
       setprop wlan.driver.config /data/misc/wifi/WCNSS_qcom_cfg.ini
 
-      # Load kernel module in a separate process
-      load_wifiKM &
+      # Use different wpa_supplicant.conf template between wcn driver
+      # and ath6kl driver
+      rm /system/etc/wifi/wpa_supplicant.conf
+      ln -s /system/etc/wifi/wpa_supplicant_wcn.conf \
+                /system/etc/wifi/wpa_supplicant.conf
+
+      # Trigger WCNSS platform driver
+      trigger_wcnss &
+      ;;
+      esac
       ;;
 
     msm8960*)
@@ -176,7 +322,8 @@ case "$target" in
 
       if [ "$wlanchip" == "" ]; then
           # auto detect ar6004-sdio card
-          # for ar6004-sdio card, the vendor id and device id is as the following
+          # for ar6004-sdio card, the vendor id and device id is
+          # as the following
           # vendor id  device id
           #    0x0271     0x0400
           #    0x0271     0x0401
@@ -225,6 +372,12 @@ case "$target" in
 		/system/etc/firmware/ath6k/AR6004/hw1.3/fw.ram.bin
         ln -s /system/etc/firmware/ath6k/AR6004/hw1.3/bdata.bin_usb \
 		/system/etc/firmware/ath6k/AR6004/hw1.3/bdata.bin
+
+        # Use different wpa_supplicant.conf template between wcn driver
+        # and ath6kl driver
+        rm /system/etc/wifi/wpa_supplicant.conf
+        ln -s /system/etc/wifi/wpa_supplicant_ath6kl.conf \
+                /system/etc/wifi/wpa_supplicant.conf
         ;;
       "AR6004-SDIO")
         setprop wlan.driver.ath 2
@@ -242,22 +395,36 @@ case "$target" in
 		/system/etc/firmware/ath6k/AR6004/hw1.3/fw.ram.bin
         ln -s /system/etc/firmware/ath6k/AR6004/hw1.3/bdata.bin_sdio \
 		/system/etc/firmware/ath6k/AR6004/hw1.3/bdata.bin
+
+        # Use different wpa_supplicant.conf template between wcn driver
+        # and ath6kl driver
+        rm /system/etc/wifi/wpa_supplicant.conf
+        ln -s /system/etc/wifi/wpa_supplicant_ath6kl.conf \
+                  /system/etc/wifi/wpa_supplicant.conf
         ;;
       *)
         echo "*** WI-FI chip ID is not specified in /persist/wlan_chip_id **"
         echo "*** Use the default WCN driver.                             **"
-        setprop wlan.driver.ath 0 
+        setprop wlan.driver.ath 0
         rm  /system/lib/modules/wlan.ko
         rm  /system/lib/modules/cfg80211.ko
-        ln -s /system/lib/modules/prima/prima_wlan.ko /system/lib/modules/wlan.ko
-        ln -s /system/lib/modules/prima/cfg80211.ko /system/lib/modules/cfg80211.ko
+        ln -s /system/lib/modules/prima/prima_wlan.ko \
+		/system/lib/modules/wlan.ko
+        ln -s /system/lib/modules/prima/cfg80211.ko \
+		/system/lib/modules/cfg80211.ko
 
         # The property below is used in Qcom SDK for softap to determine
         # the wifi driver config file
         setprop wlan.driver.config /data/misc/wifi/WCNSS_qcom_cfg.ini
 
-        # Load kernel module in a separate process
-        load_wifiKM &
+        # Use different wpa_supplicant.conf template between wcn driver
+        # and ath6kl driver
+        rm /system/etc/wifi/wpa_supplicant.conf
+        ln -s /system/etc/wifi/wpa_supplicant_wcn.conf \
+                  /system/etc/wifi/wpa_supplicant.conf
+
+        # Trigger WCNSS platform driver
+        trigger_wcnss &
         ;;
       esac
       ;;
@@ -276,25 +443,32 @@ case "$target" in
              setprop wlan.driver.ath 1
              rm  /system/lib/modules/wlan.ko
              rm  /system/lib/modules/cfg80211.ko
-             ln -s /system/lib/modules/ath6kl/ath6kl_sdio.ko /system/lib/modules/wlan.ko
-             ln -s /system/lib/modules/ath6kl/cfg80211.ko /system/lib/modules/cfg80211.ko
+             ln -s /system/lib/modules/ath6kl/ath6kl_sdio.ko \
+		/system/lib/modules/wlan.ko
+             ln -s /system/lib/modules/ath6kl/cfg80211.ko \
+		/system/lib/modules/cfg80211.ko
              ;;
             "WCN1314")
              setprop wlan.driver.ath 0
              rm  /system/lib/modules/wlan.ko
              rm  /system/lib/modules/cfg80211.ko
-             ln -s /system/lib/modules/volans/WCN1314_rf.ko /system/lib/modules/wlan.ko
-             ln -s /system/lib/modules/volans/cfg80211.ko /system/lib/modules/cfg80211.ko
+             ln -s /system/lib/modules/volans/WCN1314_rf.ko \
+		/system/lib/modules/wlan.ko
+             ln -s /system/lib/modules/volans/cfg80211.ko \
+		/system/lib/modules/cfg80211.ko
              ;;
             *)
              setprop wlan.driver.ath 1
              rm  /system/lib/modules/wlan.ko
              rm  /system/lib/modules/cfg80211.ko
-             ln -s /system/lib/modules/ath6kl/ath6kl_sdio.ko /system/lib/modules/wlan.ko
-             ln -s /system/lib/modules/ath6kl/cfg80211.ko /system/lib/modules/cfg80211.ko
-             echo "********************************************************************"
-             echo "*** Error:WI-FI chip ID is not specified in /persist/wlan_chip_id **"
-             echo "*******    WI-FI may not work    ***********************************"
+             ln -s /system/lib/modules/ath6kl/ath6kl_sdio.ko \
+		/system/lib/modules/wlan.ko
+             ln -s /system/lib/modules/ath6kl/cfg80211.ko \
+		/system/lib/modules/cfg80211.ko
+             echo "************************************************************"
+             echo "*** Error:WI-FI chip ID is not specified in"
+             echo "/persist/wlan_chip_id"
+             echo "*******    WI-FI may not work    ***************************"
              ;;
         esac
     ;;

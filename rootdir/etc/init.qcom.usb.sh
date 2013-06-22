@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# Copyright (c) 2012, Code Aurora Forum. All rights reserved.
+# Copyright (c) 2012, The Linux Foundation. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -10,7 +10,7 @@
 #       copyright notice, this list of conditions and the following
 #       disclaimer in the documentation and/or other materials provided
 #       with the distribution.
-#     * Neither the name of Code Aurora Forum, Inc. nor the names of its
+#     * Neither the name of The Linux Foundation nor the names of its
 #       contributors may be used to endorse or promote products derived
 #      from this software without specific prior written permission.
 #
@@ -89,10 +89,10 @@ usb_config=`getprop persist.sys.usb.config`
 case "$usb_config" in
     "" | "adb") #USB persist config not set, select default configuration
         case $target in
-            "msm8610" | "msm8226")
+            "apq8084")
                 setprop persist.sys.usb.config diag,adb
                 ;;
-            "msm8960" | "msm8974")
+            "msm8960" | "msm8974" | "msm8226" | "msm8610")
                 case "$baseband" in
                     "mdm")
                          setprop persist.sys.usb.config diag,diag_mdm,serial_hsic,serial_tty,rmnet_hsic,mass_storage,adb

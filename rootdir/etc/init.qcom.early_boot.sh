@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# Copyright (c) 2012, Code Aurora Forum. All rights reserved.
+# Copyright (c) 2012, The Linux Foundation. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -8,7 +8,7 @@
 #     * Redistributions in binary form must reproduce the above copyright
 #       notice, this list of conditions and the following disclaimer in the
 #       documentation and/or other materials provided with the distribution.
-#     * Neither the name of Code Aurora nor
+#     * Neither the name of The Linux Foundation nor
 #       the names of its contributors may be used to endorse or promote
 #       products derived from this software without specific prior written
 #       permission.
@@ -107,18 +107,58 @@ case "$1" in
         case "$soc_hwplatform" in
             "Liquid")
                 setprop ro.sf.lcd_density 160
+                # Liquid do not have hardware navigation keys, so enable
+                # Android sw navigation bar
+                setprop ro.hw.nav_keys 0
                 ;;
             *)
-                setprop ro.sf.lcd_density 340
+                setprop ro.sf.lcd_density 320
                 ;;
         esac
         ;;
 
-    "msm8610" | "msm8226")
+    "msm8226")
         case "$soc_hwplatform" in
             *)
-                setprop ro.sf.lcd_density 340
+                setprop ro.sf.lcd_density 320
+                ;;
+        esac
+        ;;
+
+    "msm8610" | "apq8084")
+        case "$soc_hwplatform" in
+            *)
+                setprop ro.sf.lcd_density 240
                 ;;
         esac
         ;;
 esac
+
+# Setup HDMI related nodes & permissions
+# HDMI can be fb1 or fb2
+# Loop through the sysfs nodes and determine
+# the HDMI(dtv panel)
+for file in /sys/class/graphics/fb*
+do
+    value=`cat $file/msm_fb_type`
+    case "$value" in
+            "dtv panel")
+        chown system.graphics $file/hpd
+        chown system.graphics $file/vendor_name
+        chown system.graphics $file/product_description
+        chmod 0664 $file/hpd
+        chmod 0664 $file/vendor_name
+        chmod 0664 $file/product_description
+        chmod 0664 $file/video_mode
+        chmod 0664 $file/format_3d
+        # create symbolic link
+        ln -s $file /dev/graphics/hdmi
+        # Change owner and group for media server and surface flinger
+        chown system.system $file/format_3d;;
+    esac
+done
+
+# Set date to a time after 2008
+# This is a workaround for Zygote to preload time related classes properly
+date -s 20090102.130000
+

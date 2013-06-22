@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# Copyright (c) 2012, Code Aurora Forum. All rights reserved.
+# Copyright (c) 2012-2013, The Linux Foundation. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -10,7 +10,7 @@
 #       copyright notice, this list of conditions and the following
 #       disclaimer in the documentation and/or other materials provided
 #       with the distribution.
-#     * Neither the name of Code Aurora Forum, Inc. nor the names of its
+#     * Neither the name of The Linux Foundation nor the names of its
 #       contributors may be used to endorse or promote products derived
 #      from this software without specific prior written permission.
 #
@@ -39,6 +39,12 @@ export PATH
 
 case "$target" in
     msm8974*)
+        insmod /system/lib/modules/adsp-loader.ko
+        ;;
+    msm8610*)
+        insmod /system/lib/modules/adsp-loader.ko
+        ;;
+    msm8226*)
         insmod /system/lib/modules/adsp-loader.ko
         ;;
     *)
@@ -76,40 +82,71 @@ esac
 echo "The BTSOC ID is $btsoc"
 case "$btsoc" in
     "ath3k")
-        echo "Setting soft links for auxpcm files"
-        rm /etc/snd_soc_msm/snd_soc_msm 2>/dev/null
-        rm /etc/snd_soc_msm/snd_soc_msm_2x 2>/dev/null
-        rm /etc/snd_soc_msm/snd_soc_msm_2x_mpq 2>/dev/null
-        rm /etc/snd_soc_msm/snd_soc_msm_2x_Fusion3 2>/dev/null
-        rm /etc/snd_soc_msm/snd_soc_msm_Sitar 2>/dev/null
-        ln -s /etc/snd_soc_msm/snd_soc_msm_auxpcm             /etc/snd_soc_msm/snd_soc_msm 2>/dev/null
-        ln -s /etc/snd_soc_msm/snd_soc_msm_2x_auxpcm          /etc/snd_soc_msm/snd_soc_msm_2x 2>/dev/null
-        ln -s /etc/snd_soc_msm/snd_soc_msm_2x_mpq_auxpcm      /etc/snd_soc_msm/snd_soc_msm_2x_mpq 2>/dev/null
-        ln -s /etc/snd_soc_msm/snd_soc_msm_2x_Fusion3_auxpcm  /etc/snd_soc_msm/snd_soc_msm_2x_Fusion3 2>/dev/null
-        ln -s /etc/snd_soc_msm/snd_soc_msm_Sitar_auxpcm       /etc/snd_soc_msm/snd_soc_msm_Sitar 2>/dev/null
+	case "$target" in
+	    msm8974*)
+		echo "Setting soft links for auxpcm files"
+		rm /etc/snd_soc_msm/snd_soc_msm_Taiko_liquid 2>/dev/null
+		ln -s /etc/snd_soc_msm/snd_soc_msm_Taiko_liquid_auxpcm	/etc/snd_soc_msm/snd_soc_msm_Taiko_liquid 2>/dev/null
+		;;
+	    msm8960*)
+	        echo "Setting soft links for auxpcm files"
+		rm /etc/snd_soc_msm/snd_soc_msm 2>/dev/null
+		rm /etc/snd_soc_msm/snd_soc_msm_2x 2>/dev/null
+		rm /etc/snd_soc_msm/snd_soc_msm_2x_mpq 2>/dev/null
+		rm /etc/snd_soc_msm/snd_soc_msm_2x_Fusion3 2>/dev/null
+		rm /etc/snd_soc_msm/snd_soc_msm_Sitar 2>/dev/null
+		ln -s /etc/snd_soc_msm/snd_soc_msm_auxpcm             /etc/snd_soc_msm/snd_soc_msm 2>/dev/null
+		ln -s /etc/snd_soc_msm/snd_soc_msm_2x_auxpcm          /etc/snd_soc_msm/snd_soc_msm_2x 2>/dev/null
+		ln -s /etc/snd_soc_msm/snd_soc_msm_2x_mpq_auxpcm      /etc/snd_soc_msm/snd_soc_msm_2x_mpq 2>/dev/null
+		ln -s /etc/snd_soc_msm/snd_soc_msm_2x_Fusion3_auxpcm  /etc/snd_soc_msm/snd_soc_msm_2x_Fusion3 2>/dev/null
+		ln -s /etc/snd_soc_msm/snd_soc_msm_Sitar_auxpcm       /etc/snd_soc_msm/snd_soc_msm_Sitar 2>/dev/null
+		;;
+	    *)
+		;;
+	esac
         ;;
     *)
-        echo "Not setting soft links, remove Auxpcm UCM files"
-        rm /etc/snd_soc_msm/snd_soc_msm_auxpcm 2>/dev/null
-        rm /etc/snd_soc_msm/snd_soc_msm_2x_auxpcm 2>/dev/null
-        rm /etc/snd_soc_msm/snd_soc_msm_2x_mpq_auxpcm 2>/dev/null
-        rm /etc/snd_soc_msm/snd_soc_msm_2x_Fusion3_auxpcm 2>/dev/null
-        rm /etc/snd_soc_msm/snd_soc_msm_Sitar_auxpcm 2>/dev/null
+	case "$target" in
+	    msm8974*)
+		echo "Not setting soft links, remove Auxpcm UCM files"
+		rm /etc/snd_soc_msm/snd_soc_msm_Taiko_liquid_auxpcm 2>/dev/null
+		;;
+	    msm8960*)
+		echo "Not setting soft links, remove Auxpcm UCM files"
+		rm /etc/snd_soc_msm/snd_soc_msm_auxpcm 2>/dev/null
+		rm /etc/snd_soc_msm/snd_soc_msm_2x_auxpcm 2>/dev/null
+		rm /etc/snd_soc_msm/snd_soc_msm_2x_mpq_auxpcm 2>/dev/null
+		rm /etc/snd_soc_msm/snd_soc_msm_2x_Fusion3_auxpcm 2>/dev/null
+		rm /etc/snd_soc_msm/snd_soc_msm_Sitar_auxpcm 2>/dev/null
+		;;
+	    *)
+		;;
+	esac
         ;;
 esac
 
 case "$target" in
     msm8974*)
 
-        rm -f /system/etc/firmware/wcd9320/wcd9320_anc.bin
-        rm -f /system/etc/firmware/wcd9320/wcd9320_mbhc.bin
+        rm -rf /system/etc/firmware/wcd9320/wcd9320_anc.bin
+        rm -rf /system/etc/firmware/wcd9320/wcd9320_mbhc.bin
         mkdir -p /system/etc/firmware/wcd9320
-        ln -s /data/misc/audio/wcd9310_anc.bin /system/etc/firmware/wcd9320/wcd9320_anc.bin
+        ln -s /data/misc/audio/wcd9320_anc.bin /system/etc/firmware/wcd9320/wcd9320_anc.bin
         ln -s /data/misc/audio/mbhc.bin /system/etc/firmware/wcd9320/wcd9320_mbhc.bin
+        ln -s /data/misc/audio/wcd9320_mad_audio.bin /system/etc/firmware/wcd9320/wcd9320_mad_audio.bin
+        ;;
+
+    msm8226*)
+
+        rm -rf /system/etc/firmware/wcd9306/wcd9306_anc.bin
+        rm -rf /system/etc/firmware/wcd9306/wcd9306_mbhc.bin
+        mkdir -p /system/etc/firmware/wcd9306
+        ln -s /data/misc/audio/wcd9320_anc.bin /system/etc/firmware/wcd9306/wcd9306_anc.bin
+        ln -s /data/misc/audio/mbhc.bin /system/etc/firmware/wcd9306/wcd9306_mbhc.bin
         ;;
 
     msm8960*)
-        ;&
+    ;&
     msm8660*)
 
         rm -f /system/etc/firmware/wcd9310/wcd9310_anc.bin

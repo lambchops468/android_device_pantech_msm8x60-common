@@ -1,5 +1,5 @@
 #!/system/bin/sh
-# Copyright (c) 2009-2012, Code Aurora Forum. All rights reserved.
+# Copyright (c) 2009-2013, The Linux Foundation. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -8,7 +8,7 @@
 #     * Redistributions in binary form must reproduce the above copyright
 #       notice, this list of conditions and the following disclaimer in the
 #       documentation and/or other materials provided with the distribution.
-#     * Neither the name of Code Aurora nor
+#     * Neither the name of The Linux Foundation nor
 #       the names of its contributors may be used to endorse or promote
 #       products derived from this software without specific prior written
 #       permission.
@@ -33,21 +33,23 @@ platformid=`cat /sys/devices/system/soc/soc0/id`
 #
 start_sensors()
 {
-    mkdir -p /data/system/sensors
-    touch /data/system/sensors/settings
-    chmod 775 /data/system/sensors
-    chmod 664 /data/system/sensors/settings
-    chown system /data/system/sensors/settings
+    if [ -c /dev/msm_dsps -o -c /dev/sensors ]; then
+        mkdir -p /data/system/sensors
+        touch /data/system/sensors/settings
+        chmod 775 /data/system/sensors
+        chmod 664 /data/system/sensors/settings
+        chown system /data/system/sensors/settings
 
-    mkdir -p /data/misc/sensors
-    chmod 775 /data/misc/sensors
+        mkdir -p /data/misc/sensors
+        chmod 775 /data/misc/sensors
 
-    if [ ! -s /data/system/sensors/settings ]; then
-        # If the settings file is empty, enable sensors HAL
-        # Otherwise leave the file with it's current contents
-        echo 1 > /data/system/sensors/settings
+        if [ ! -s /data/system/sensors/settings ]; then
+            # If the settings file is empty, enable sensors HAL
+            # Otherwise leave the file with it's current contents
+            echo 1 > /data/system/sensors/settings
+        fi
+        start sensors
     fi
-    start sensors
 }
 
 start_battery_monitor()
@@ -62,45 +64,73 @@ start_battery_monitor()
 
 baseband=`getprop ro.baseband`
 izat_premium_enablement=`getprop ro.qc.sdk.izat.premium_enabled`
+izat_service_mask=`getprop ro.qc.sdk.izat.service_mask`
 
 #
 # Suppress default route installation during RA for IPV6; user space will take
 # care of this
-#
+# exception default ifc
 for file in /proc/sys/net/ipv6/conf/*
 do
   echo 0 > $file/accept_ra_defrtr
 done
+echo 1 > /proc/sys/net/ipv6/conf/default/accept_ra_defrtr
 
 #
 # Start gpsone_daemon for SVLTE Type I & II devices
 #
 case "$target" in
-        "msm7630_fusion" | "msm8960" | "msm7627a")
+        "msm7630_fusion")
         start gpsone_daemon
 esac
 case "$baseband" in
         "svlte2a")
         start gpsone_daemon
         start bridgemgrd
-esac
-case "$target" in
-        "msm7630_surf" | "msm8660" | "msm8960")
-        start quipc_igsn
-esac
-case "$target" in
-        "msm7630_surf" | "msm8660" | "msm8960")
-        start quipc_main
+        ;;
+        "sglte" | "sglte2")
+        start gpsone_daemon
+        ;;
 esac
 
-case "$target" in
-        "msm8960" | "msm8974")
-        if [ "$izat_premium_enablement" -eq 1 ]; then
-            start location_mq
-            start xtwifi_inet
-            start xtwifi_client
-        fi
-esac
+let "izat_service_gtp_wifi=$izat_service_mask & 2#1"
+let "izat_service_gtp_wwan_lite=($izat_service_mask & 2#10)>>1"
+let "izat_service_pip=($izat_service_mask & 2#100)>>2"
+
+if [ "$izat_premium_enablement" -ne 1 ]; then
+    if [ "$izat_service_gtp_wifi" -ne 0 ]; then
+# GTP WIFI bit shall be masked by the premium service flag
+        let "izat_service_gtp_wifi=0"
+    fi
+fi
+
+if [ "$izat_service_gtp_wwan_lite" -ne 0 ] ||
+   [ "$izat_service_gtp_wifi" -ne 0 ] ||
+   [ "$izat_service_pip" -ne 0 ]; then
+# OS Agent would also be started under the same condition
+    start location_mq
+fi
+
+if [ "$izat_service_gtp_wwan_lite" -ne 0 ] ||
+   [ "$izat_service_gtp_wifi" -ne 0 ]; then
+# start GTP services shared by WiFi and WWAN Lite
+    start xtwifi_inet
+    start xtwifi_client
+fi
+
+if [ "$izat_service_gtp_wifi" -ne 0 ] ||
+   [ "$izat_service_pip" -ne 0 ]; then
+# advanced WiFi scan service shared by WiFi and PIP
+    start lowi-server
+fi
+
+if [ "$izat_service_pip" -ne 0 ]; then
+# PIP services
+    start quipc_main
+    start quipc_igsn
+fi
+
+start_sensors
 
 case "$target" in
     "msm7630_surf" | "msm7630_1x" | "msm7630_fusion")
@@ -114,17 +144,13 @@ case "$target" in
         platformvalue=`cat /sys/devices/system/soc/soc0/hw_platform`
         case "$platformvalue" in
             "Fluid")
-                start_sensors
                 start profiler_daemon;;
         esac
         ;;
     "msm8960")
-        if [ "$platformid" != "116" ] && [ "$platformid" != "142" ]; then
-            start_sensors
-        fi
         case "$baseband" in
             "msm")
-		start_battery_monitor;;
+                start_battery_monitor;;
         esac
 
         platformvalue=`cat /sys/devices/system/soc/soc0/hw_platform`
@@ -136,9 +162,7 @@ case "$target" in
         esac
         ;;
     "msm8974")
-        start_sensors
-
-        platformvalue=`cat /sys/devices/system/soc/soc0/hw_platform`
+        platformvalue=`cat /sys/devices/soc0/hw_platform`
         case "$platformvalue" in
              "Fluid")
                  start profiler_daemon;;

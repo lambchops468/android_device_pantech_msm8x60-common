@@ -25,9 +25,10 @@
 #ANGLE
 PRODUCT_PACKAGES += libangle
 
-#AUDIO_HARDWARE  audio.primary.msm8660 commented because presto have own
+#AUDIO_HARDWARE (audio.primary.msm8660: disabled, must be in your device tree)
 PRODUCT_PACKAGES += \
     audio.primary.msm8960 \
+    audio.primary.default \
     audio.a2dp.default \
     audio.usb.default
 
@@ -35,6 +36,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     audio_policy.msm8660 \
     audio_policy.msm8960 \
+    audio_policy.default \
     audio_policy.conf
 
 #AMPLOADER
@@ -44,6 +46,12 @@ PRODUCT_PACKAGES += amploader
 PRODUCT_PACKAGES += \
     QualcommSoftAP \
     TSCalibration
+
+#BRCTL
+PRODUCT_PACKAGES += \
+    brctl \
+    libbridge
+
 
 #BSON
 PRODUCT_PACKAGES += libbson
@@ -62,19 +70,36 @@ PRODUCT_PACKAGES += libcimax_spi
 
 #CONNECTIVITY
 PRODUCT_PACKAGES += \
-    cnd \
-    librefcne
+    libcnefeatureconfig \
+    services-ext
 
 #CURL
 PRODUCT_PACKAGES += \
     libcurl \
     curl
 
+#DASH
+PRODUCT_PACKAGES += \
+    libdashplayer \
+    qcmediaplayer
+
 #E2FSPROGS
 PRODUCT_PACKAGES += e2fsck
 
+#EBTABLES
+PRODUCT_PACKAGES += \
+    ebtables \
+    ethertypes \
+    libebtc
+
+#FM
+PRODUCT_PACKAGES += \
+    qcom.fmradio \
+    libqcomfm_jni
+
 #GPS
 PRODUCT_PACKAGES += \
+    gps.conf \
     gps.default \
     gps.mahimahi \
     libloc_adapter \
@@ -116,6 +141,7 @@ PRODUCT_PACKAGES += \
     init.qcom.post_boot.sh \
     init.qcom.syspart_fixup.sh \
     init.qcom.rc \
+    init.qcom.factory.sh \
     init.qcom.sdio.sh \
     init.qcom.sh \
     init.qcom.class_core.sh \
@@ -152,6 +178,12 @@ PRODUCT_PACKAGES += \
     qcks \
     efsks
 
+#LIB_NL
+PRODUCT_PACKAGES += libnl_2
+
+#LIB_XML2
+PRODUCT_PACKAGES += libxml2
+
 #LIBCAMERA
 PRODUCT_PACKAGES += \
     camera.msm8660 \
@@ -160,6 +192,7 @@ PRODUCT_PACKAGES += \
     libmmcamera_interface \
     libmmcamera_interface2 \
     libmmjpeg_interface \
+    libqomx_core \
     mm-qcamera-app
 
 #LIBCOPYBITP
@@ -191,6 +224,9 @@ PRODUCT_PACKAGES += \
 
 #LIBAUDIOPARAM -- Exposing AudioParameter as dynamic library for SRS TruMedia to work
 PRODUCT_PACKAGES += libaudioparameter
+
+#LIBAUDIORESAMPLER -- High-quality audio resampler
+LIBAUDIORESAMPLER := libaudio-resampler
 
 #LIBOPENCOREHW
 PRODUCT_PACKAGES += libopencorehw
@@ -245,8 +281,10 @@ PRODUCT_PACKAGES += \
     libdivxdrmdecrypt \
     liblasic \
     libOmxVdec \
+    libOmxVdecHevc \
     libOmxVenc \
     libOmxVidEnc \
+    libstagefrighthw \
     mm-vdec-omx-property-mgr \
     mm-vdec-omx-test \
     mm-venc-omx-test \
@@ -324,7 +362,10 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += qrngd
 
 #WPA
-PRODUCT_PACKAGES += wpa_supplicant.conf
+PRODUCT_PACKAGES += \
+    wpa_supplicant.conf \
+    wpa_supplicant_wcn.conf \
+    wpa_supplicant_ath6kl.conf
 
 #ZLIB
 PRODUCT_PACKAGES += \
@@ -340,13 +381,16 @@ PRODUCT_PACKAGES += \
 #VT_JNI
 #PRODUCT_PACKAGES += libvt_jni
 
-#----------------------------------------------------------------------
+#CRDA
+PRODUCT_PACKAGES += \
+    crda \
+    regdbdump \
+    regulatory.bin \
+    linville.key.pub.pem \
+    init.crda.sh
 
 # Bugmailer
 PRODUCT_PACKAGES += send_bug
-PRODUCT_COPY_FILES += \
-    system/extras/bugmailer/bugmailer.sh:system/bin/bugmailer.sh \
-    system/extras/bugmailer/send_bug:system/bin/send_bug
 
 # Live Wallpapers
 PRODUCT_PACKAGES += \
@@ -359,28 +403,6 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     make_ext4fs \
     setup_fs
-
-# Permissions
-PRODUCT_COPY_FILES += \
-    frameworks/native/data/etc/android.hardware.camera.flash-autofocus.xml:system/etc/permissions/android.hardware.camera.flash-autofocus.xml \
-    frameworks/native/data/etc/android.hardware.camera.front.xml:system/etc/permissions/android.hardware.camera.front.xml \
-    frameworks/native/data/etc/android.hardware.location.gps.xml:system/etc/permissions/android.hardware.location.gps.xml \
-    frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
-    frameworks/native/data/etc/android.hardware.wifi.xml:system/etc/permissions/android.hardware.wifi.xml \
-    frameworks/native/data/etc/android.hardware.wifi.direct.xml:system/etc/permissions/android.hardware.wifi.direct.xml \
-    frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml \
-    frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
-    frameworks/native/data/etc/android.hardware.sensor.proximity.xml:system/etc/permissions/android.hardware.sensor.proximity.xml \
-    frameworks/native/data/etc/android.hardware.sensor.light.xml:system/etc/permissions/android.hardware.sensor.light.xml \
-    frameworks/native/data/etc/android.hardware.sensor.gyroscope.xml:system/etc/permissions/android.hardware.sensor.gyroscope.xml \
-    frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml \
-    frameworks/native/data/etc/android.hardware.usb.host.xml:system/etc/permissions/android.hardware.usb.host.xml \
-    packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml
-
-# Postrecoveryboot
-PRODUCT_COPY_FILES += \
-    device/pantech/qcom-common/recovery/postrecoveryboot.sh:recovery/root/sbin/postrecoveryboot.sh \
-    device/pantech/qcom-common/recovery/postrecoveryboot.sh:recovery/system/bin/postrecoveryboot.sh
 
 # Torch
 PRODUCT_PACKAGES += \
@@ -397,7 +419,36 @@ PRODUCT_PACKAGES += \
 
 #----------------------------------------------------------------------
 
-# Overlays
+# Bugmailer
+PRODUCT_COPY_FILES += \
+    system/extras/bugmailer/bugmailer.sh:system/bin/bugmailer.sh \
+    system/extras/bugmailer/send_bug:system/bin/send_bug
+
+# Permissions
+PRODUCT_COPY_FILES += \
+    frameworks/native/data/etc/android.hardware.camera.flash-autofocus.xml:system/etc/permissions/android.hardware.camera.flash-autofocus.xml \
+    frameworks/native/data/etc/android.hardware.camera.front.xml:system/etc/permissions/android.hardware.camera.front.xml \
+    frameworks/native/data/etc/android.hardware.location.gps.xml:system/etc/permissions/android.hardware.location.gps.xml \
+    frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
+    frameworks/native/data/etc/android.hardware.wifi.xml:system/etc/permissions/android.hardware.wifi.xml \
+    frameworks/native/data/etc/android.hardware.wifi.direct.xml:system/etc/permissions/android.hardware.wifi.direct.xml \
+    frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml \
+    frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
+    frameworks/native/data/etc/android.hardware.sensor.proximity.xml:system/etc/permissions/android.hardware.sensor.proximity.xml \
+    frameworks/native/data/etc/android.hardware.sensor.light.xml:system/etc/permissions/android.hardware.sensor.light.xml \
+    frameworks/native/data/etc/android.hardware.sensor.accelerometer.xml:system/etc/permissions/android.hardware.sensor.accelerometer.xml \
+    frameworks/native/data/etc/android.hardware.sensor.gyroscope.xml:system/etc/permissions/android.hardware.sensor.gyroscope.xml \
+    frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml \
+    frameworks/native/data/etc/android.hardware.usb.host.xml:system/etc/permissions/android.hardware.usb.host.xml \
+    packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml
+
+# Postrecoveryboot
+PRODUCT_COPY_FILES += \
+    device/pantech/qcom-common/recovery/postrecoveryboot.sh:recovery/root/sbin/postrecoveryboot.sh \
+    device/pantech/qcom-common/recovery/postrecoveryboot.sh:recovery/system/bin/postrecoveryboot.sh
+
+# enable overlays to use our version of
+# source/resources etc.
 DEVICE_PACKAGE_OVERLAYS += device/pantech/qcom-common/overlay
 
 # Propertys spacific for this device
