@@ -16,6 +16,11 @@
 
 #----------------------------------------------------------------------
 
+# Also get non-open-source specific aspects
+$(call inherit-product, vendor/pantech/presto/qcom-common-vendor.mk)
+
+#----------------------------------------------------------------------
+
 # Below projects/packages with LOCAL_MODULEs will be used by
 # PRODUCT_PACKAGES to build LOCAL_MODULEs that are tagged with
 # optional tag, which will not be available on target unless
