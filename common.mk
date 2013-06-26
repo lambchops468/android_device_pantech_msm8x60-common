@@ -17,7 +17,7 @@
 #----------------------------------------------------------------------
 
 # Also get non-open-source specific aspects
-$(call inherit-product, vendor/pantech/presto/qcom-common-vendor.mk)
+$(call inherit-product, vendor/pantech/qcom-common/qcom-common-vendor.mk)
 
 #----------------------------------------------------------------------
 
