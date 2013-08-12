@@ -39,7 +39,7 @@ BOARD_HAS_LARGE_FILESYSTEM := true
 BOARD_PERSISTIMAGE_FILE_SYSTEM_TYPE := ext4
 
 # Charger res
-#BOARD_CHARGER_RES := device/pantech/qcom-common/charger/res/images/charger
+BOARD_CHARGER_RES := device/pantech/qcom-common/charger/res/images/charger
 
 # Charging mode
 #BOARD_CHARGING_MODE_BOOTING_LPM := /sys/class/power_supply/battery/batt_lp_charging
