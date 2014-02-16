@@ -409,19 +409,6 @@ PRODUCT_PACKAGES += \
     make_ext4fs \
     setup_fs
 
-# Torch
-PRODUCT_PACKAGES += \
-    Apollo \
-    Torch
-
-# Wallpapers
-PRODUCT_PACKAGES += \
-    Galaxy4 \
-    HoloSpiralWallpaper \
-    MagicSmokeWallpapers \
-    NoiseField \
-    PhaseBeam
-
 #----------------------------------------------------------------------
 
 # Bugmailer
