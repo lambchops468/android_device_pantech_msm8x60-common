@@ -16,11 +16,6 @@
 
 #----------------------------------------------------------------------
 
-# Also get non-open-source specific aspects
-$(call inherit-product, vendor/pantech/qcom-common/qcom-common-vendor.mk)
-
-#----------------------------------------------------------------------
-
 # Below projects/packages with LOCAL_MODULEs will be used by
 # PRODUCT_PACKAGES to build LOCAL_MODULEs that are tagged with
 # optional tag, which will not be available on target unless
@@ -431,9 +426,18 @@ PRODUCT_COPY_FILES += \
     device/pantech/qcom-common/recovery/postrecoveryboot.sh:recovery/root/sbin/postrecoveryboot.sh \
     device/pantech/qcom-common/recovery/postrecoveryboot.sh:recovery/system/bin/postrecoveryboot.sh
 
+#----------------------------------------------------------------------
+
 # enable overlays to use our version of
 # source/resources etc.
 DEVICE_PACKAGE_OVERLAYS += device/pantech/qcom-common/overlay
+
+# For PRODUCT_COPY_FILES, the first instance takes precedence.
+# Since we want use QC specific files, we should inherit
+# device-vendor.mk first to make sure QC specific files gets installed.
+ifeq ($(filter presto,$(TARGET_DEVICE)),)
+$(call inherit-product, vendor/pantech/qcom-common/qcom-common-vendor.mk)
+endif # TARGET_DEVICE
 
 # Propertys spacific for this device
 PRODUCT_PROPERTY_OVERRIDES += \
