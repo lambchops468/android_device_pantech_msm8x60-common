@@ -27,8 +27,7 @@ TARGET_CPU_ABI      := armeabi-v7a
 TARGET_CPU_ABI2     := armeabi
 
 # Audio
-BOARD_USES_AUDIO_LEGACY  := false
-TARGET_PROVIDES_LIBAUDIO := false
+BOARD_USES_LEGACY_ALSA_AUDIO := true
 
 # Bluetooth
 BOARD_HAVE_BLUETOOTH := true
