@@ -30,7 +30,8 @@ PRODUCT_PACKAGES += \
     audio.primary.msm8960 \
     audio.primary.default \
     audio.a2dp.default \
-    audio.usb.default
+    audio.usb.default \
+    audio.r_submix.default
 
 #AUDIO_POLICY
 PRODUCT_PACKAGES += \
@@ -47,12 +48,6 @@ PRODUCT_PACKAGES += \
     QualcommSoftAP \
     TSCalibration
 
-#BRCTL
-PRODUCT_PACKAGES += \
-    brctl \
-    libbridge
-
-
 #BSON
 PRODUCT_PACKAGES += libbson
 
@@ -64,9 +59,6 @@ PRODUCT_PACKAGES += \
 
 #C2DColorConvert
 PRODUCT_PACKAGES += libc2dcolorconvert
-
-#CIMAX
-PRODUCT_PACKAGES += libcimax_spi
 
 #CONNECTIVITY
 PRODUCT_PACKAGES += \
@@ -85,12 +77,6 @@ PRODUCT_PACKAGES += \
 
 #E2FSPROGS
 PRODUCT_PACKAGES += e2fsck
-
-#EBTABLES
-PRODUCT_PACKAGES += \
-    ebtables \
-    ethertypes \
-    libebtc
 
 #FM
 PRODUCT_PACKAGES += \
@@ -122,9 +108,6 @@ PRODUCT_PACKAGES += \
     hostapd.deny \
     hostapd.accept
 
-#I420COLORCONVERT
-PRODUCT_PACKAGES += libI420colorconvert
-
 #INIT
 PRODUCT_PACKAGES += \
     init.qcom.composition_type.sh \
@@ -135,13 +118,13 @@ PRODUCT_PACKAGES += \
     init.qcom.sensor.sh \
     init.target.rc \
     init.qcom.bt.sh \
+    init.qcom.btdun.sh \
     init.qcom.coex.sh \
     init.qcom.fm.sh \
     init.qcom.early_boot.sh \
     init.qcom.post_boot.sh \
     init.qcom.syspart_fixup.sh \
     init.qcom.rc \
-    init.qcom.factory.sh \
     init.qcom.sdio.sh \
     init.qcom.sh \
     init.qcom.class_core.sh \
@@ -192,7 +175,6 @@ PRODUCT_PACKAGES += \
     libmmcamera_interface \
     libmmcamera_interface2 \
     libmmjpeg_interface \
-    libqomx_core \
     mm-qcamera-app
 
 #LIBCOPYBITP
@@ -226,7 +208,7 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += libaudioparameter
 
 #LIBAUDIORESAMPLER -- High-quality audio resampler
-LIBAUDIORESAMPLER := libaudio-resampler
+PRODUCT_PACKAGES += libaudio-resampler
 
 #LIBOPENCOREHW
 PRODUCT_PACKAGES += libopencorehw
@@ -277,47 +259,12 @@ PRODUCT_PACKAGES += \
 
 #MM_VIDEO
 PRODUCT_PACKAGES += \
-    ast-mm-vdec-omx-test \
     libdivxdrmdecrypt \
     liblasic \
     libOmxVdec \
-    libOmxVdecHevc \
     libOmxVenc \
     libOmxVidEnc \
-    libstagefrighthw \
-    mm-vdec-omx-property-mgr \
-    mm-vdec-omx-test \
-    mm-venc-omx-test \
-    mm-venc-omx-test720p \
-    mm-video-driver-test \
-    mm-video-encdrv-test
-
-#OPENCORE
-PRODUCT_PACKAGES += \
-    libomx_aacdec_sharedlibrary \
-    libomx_amrdec_sharedlibrary \
-    libomx_amrenc_sharedlibrary \
-    libomx_avcdec_sharedlibrary \
-    libomx_m4vdec_sharedlibrary \
-    libomx_mp3dec_sharedlibrary \
-    libomx_sharedlibrary \
-    libopencore_author \
-    libopencore_common \
-    libopencore_download \
-    libopencore_downloadreg \
-    libopencore_mp4local \
-    libopencore_mp4localreg \
-    libopencore_net_support \
-    libopencore_player \
-    libopencore_rtsp \
-    libopencore_rtspreg \
-    libpvdecoder_gsmamr \
-    libpvplayer_engine \
-    libpvamrwbdecoder \
-    libpvauthorengine \
-    libomx_amr_component_lib \
-    pvplayer \
-    pvplayer_engine_test
+    libstagefrighthw
 
 #PPP
 PRODUCT_PACKAGES += ip-up-vpn
@@ -327,11 +274,6 @@ PRODUCT_PACKAGES += \
     libqcomm_omx \
     01_qcomm_omx
 
-#RF4CE
-PRODUCT_PACKAGES += \
-    RemoTI_RNP.cfg \
-    rf4ce
-
 #SOFTAP
 PRODUCT_PACKAGES += \
     libQWiFiSoftApCfg \
@@ -339,9 +281,6 @@ PRODUCT_PACKAGES += \
 
 #STK
 PRODUCT_PACKAGES += Stk
-
-#STM LOG
-PRODUCT_PACKAGES += libstm-log
 
 #TSLIB_EXTERNAL
 PRODUCT_PACKAGES += \
@@ -359,13 +298,12 @@ PRODUCT_PACKAGES += \
     ts
 
 #QRGND
-PRODUCT_PACKAGES += qrngd
+PRODUCT_PACKAGES += \
+    qrngd \
+    qrngtest
 
 #WPA
-PRODUCT_PACKAGES += \
-    wpa_supplicant.conf \
-    wpa_supplicant_wcn.conf \
-    wpa_supplicant_ath6kl.conf
+PRODUCT_PACKAGES += wpa_supplicant.conf
 
 #ZLIB
 PRODUCT_PACKAGES += \
@@ -389,6 +327,9 @@ PRODUCT_PACKAGES += \
     linville.key.pub.pem \
     init.crda.sh
 
+#WLAN
+PRODUCT_PACKAGES += prima_wlan.ko
+
 # Live Wallpapers
 PRODUCT_PACKAGES += \
     LiveWallpapers \
@@ -400,6 +341,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     make_ext4fs \
     setup_fs
+
+# Flatland
+PRODUCT_PACKAGES += flatland
 
 #----------------------------------------------------------------------
 
@@ -418,8 +362,7 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.sensor.accelerometer.xml:system/etc/permissions/android.hardware.sensor.accelerometer.xml \
     frameworks/native/data/etc/android.hardware.sensor.gyroscope.xml:system/etc/permissions/android.hardware.sensor.gyroscope.xml \
     frameworks/native/data/etc/android.hardware.usb.accessory.xml:system/etc/permissions/android.hardware.usb.accessory.xml \
-    frameworks/native/data/etc/android.hardware.usb.host.xml:system/etc/permissions/android.hardware.usb.host.xml \
-    packages/wallpapers/LivePicker/android.software.live_wallpaper.xml:system/etc/permissions/android.software.live_wallpaper.xml
+    frameworks/native/data/etc/android.hardware.usb.host.xml:system/etc/permissions/android.hardware.usb.host.xml
 
 # Postrecoveryboot
 PRODUCT_COPY_FILES += \

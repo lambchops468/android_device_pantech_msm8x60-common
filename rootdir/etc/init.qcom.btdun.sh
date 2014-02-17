@@ -26,13 +26,37 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 
-#
-# start two rild when dsds property enabled
-#
-multisim=`getprop persist.multisim.config`
-if [ "$multisim" = "dsds" ] || [ "$multisim" = "dsda" ]; then
-    setprop ro.multi.rild true
-    stop ril-daemon
-    start ril-daemon
-    start ril-daemon1
+
+LOG_TAG="qcom-btdun"
+LOG_NAME="${0}:"
+#Set this to default port except for Fusion3 case
+BTDUN_MDM_PORT="/dev/smd7"
+
+loge ()
+{
+  /system/bin/log -t $LOG_TAG -p e "$LOG_NAME $@"
+}
+
+logi ()
+{
+  /system/bin/log -t $LOG_TAG -p i "$LOG_NAME $@"
+}
+
+
+logi "Enter init.qcom.btdun.sh"
+
+baseband=`getprop ro.baseband`
+soc_hwid=`cat /sys/devices/system/soc/soc0/id`
+
+if [ "$baseband" == "mdm" ] && [ "$soc_hwid" == "109" ]
+then
+        logi "Set the ttyUSB0 as Modem endpoint for Fusion3"
+        chown bluetooth:bluetooth /dev/ttyUSB0
+        BTDUN_MDM_PORT="/dev/ttyUSB0"
 fi
+
+loge "BTDUN_MDM_PORT= $BTDUN_MDM_PORT"
+#Start BT-DUN port-bridge serice with the required ports
+/system/bin/dun-server $BTDUN_MDM_PORT /dev/rfcomm0
+
+exit 0
