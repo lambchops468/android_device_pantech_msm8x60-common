@@ -375,13 +375,6 @@ PRODUCT_COPY_FILES += \
 # source/resources etc.
 DEVICE_PACKAGE_OVERLAYS += device/pantech/qcom-common/overlay
 
-# For PRODUCT_COPY_FILES, the first instance takes precedence.
-# Since we want use QC specific files, we should inherit
-# device-vendor.mk first to make sure QC specific files gets installed.
-ifeq ($(filter presto,$(TARGET_DEVICE)),)
-$(call inherit-product, vendor/pantech/qcom-common/qcom-common-vendor.mk)
-endif # TARGET_DEVICE
-
 # Propertys spacific for this device
 PRODUCT_PROPERTY_OVERRIDES += \
     ro.vendor.extension_library=/system/lib/libqc-opt.so
