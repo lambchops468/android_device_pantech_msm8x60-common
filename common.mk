@@ -25,9 +25,8 @@
 #ANGLE
 PRODUCT_PACKAGES += libangle
 
-#AUDIO_HARDWARE (audio.primary.msm8660: disabled, must be in your device tree)
+#AUDIO_HARDWARE
 PRODUCT_PACKAGES += \
-    audio.primary.msm8960 \
     audio.primary.default \
     audio.a2dp.default \
     audio.usb.default \
@@ -35,8 +34,6 @@ PRODUCT_PACKAGES += \
 
 #AUDIO_POLICY
 PRODUCT_PACKAGES += \
-    audio_policy.msm8660 \
-    audio_policy.msm8960 \
     audio_policy.default \
     audio_policy.conf
 
@@ -169,8 +166,6 @@ PRODUCT_PACKAGES += libxml2
 
 #LIBCAMERA
 PRODUCT_PACKAGES += \
-    camera.msm8660 \
-    camera.msm8960 \
     libcamera \
     libmmcamera_interface \
     libmmcamera_interface2 \
@@ -178,31 +173,19 @@ PRODUCT_PACKAGES += \
     mm-qcamera-app
 
 #LIBCOPYBITP
-PRODUCT_PACKAGES += \
-    copybit.msm8660 \
-    copybit.msm8960
 
 #LIBGESTURES
 PRODUCT_PACKAGES += \
-    libgestures \
-    gestures.msm8960
+    libgestures
 
 #LIBGRALLOC
 PRODUCT_PACKAGES += \
     gralloc.default \
-    gralloc.msm8660 \
-    gralloc.msm8960 \
     libmemalloc
 
 #LIBLIGHTS
-PRODUCT_PACKAGES += \
-    lights.msm8660 \
-    lights.msm8960
 
 #LIBHWCOMPOSER
-PRODUCT_PACKAGES += \
-    hwcomposer.msm8660 \
-    hwcomposer.msm8960
 
 #LIBAUDIOPARAM -- Exposing AudioParameter as dynamic library for SRS TruMedia to work
 PRODUCT_PACKAGES += libaudioparameter
@@ -354,7 +337,6 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.location.gps.xml:system/etc/permissions/android.hardware.location.gps.xml \
     frameworks/native/data/etc/android.hardware.touchscreen.multitouch.jazzhand.xml:system/etc/permissions/android.hardware.touchscreen.multitouch.jazzhand.xml \
     frameworks/native/data/etc/android.hardware.wifi.xml:system/etc/permissions/android.hardware.wifi.xml \
-    frameworks/native/data/etc/android.hardware.wifi.direct.xml:system/etc/permissions/android.hardware.wifi.direct.xml \
     frameworks/native/data/etc/android.software.sip.voip.xml:system/etc/permissions/android.software.sip.voip.xml \
     frameworks/native/data/etc/handheld_core_hardware.xml:system/etc/permissions/handheld_core_hardware.xml \
     frameworks/native/data/etc/android.hardware.sensor.proximity.xml:system/etc/permissions/android.hardware.sensor.proximity.xml \
