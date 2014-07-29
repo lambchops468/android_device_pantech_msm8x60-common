@@ -38,7 +38,7 @@ BOARD_HAS_LARGE_FILESYSTEM := true
 BOARD_PERSISTIMAGE_FILE_SYSTEM_TYPE := ext4
 
 # Charger res
-BOARD_CHARGER_RES := device/pantech/qcom-common/charger
+BOARD_CHARGER_RES := device/pantech/msm8x60-common/charger
 
 # Charging mode
 #BOARD_CHARGING_MODE_BOOTING_LPM := /sys/class/power_supply/battery/batt_lp_charging
@@ -48,7 +48,7 @@ BOARD_CHARGER_RES := device/pantech/qcom-common/charger
 COMMON_GLOBAL_CFLAGS += -DQCOM_HARDWARE
 
 # Graphics
-BOARD_EGL_CFG := device/pantech/qcom-common/prebuilt/system/lib/egl/egl.cfg
+BOARD_EGL_CFG := device/pantech/msm8x60-common/prebuilt/system/lib/egl/egl.cfg
 TARGET_USES_C2D_COMPOSITION := true
 TARGET_USES_ION := true
 USE_OPENGL_RENDERER := true
@@ -58,7 +58,7 @@ BOARD_USES_QCOM_HARDWARE := true
 BOARD_USES_QCOM_LIBS := true
 
 # Recovery
-BOARD_CUSTOM_GRAPHICS := ../../../device/pantech/qcom-common/recovery/graphics.c
+BOARD_CUSTOM_GRAPHICS := ../../../device/pantech/msm8x60-common/recovery/graphics.c
 TARGET_RECOVERY_UI_LIB := librecovery_ui_qcom
 TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
 

@@ -349,14 +349,14 @@ PRODUCT_COPY_FILES += \
 
 # Postrecoveryboot
 PRODUCT_COPY_FILES += \
-    device/pantech/qcom-common/recovery/postrecoveryboot.sh:recovery/root/sbin/postrecoveryboot.sh \
-    device/pantech/qcom-common/recovery/postrecoveryboot.sh:recovery/system/bin/postrecoveryboot.sh
+    device/pantech/msm8x60-common/recovery/postrecoveryboot.sh:recovery/root/sbin/postrecoveryboot.sh \
+    device/pantech/msm8x60-common/recovery/postrecoveryboot.sh:recovery/system/bin/postrecoveryboot.sh
 
 #----------------------------------------------------------------------
 
 # enable overlays to use our version of
 # source/resources etc.
-DEVICE_PACKAGE_OVERLAYS += device/pantech/qcom-common/overlay
+DEVICE_PACKAGE_OVERLAYS += device/pantech/msm8x60-common/overlay
 
 # Propertys spacific for this device
 PRODUCT_PROPERTY_OVERRIDES += \

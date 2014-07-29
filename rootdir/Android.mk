@@ -1,7 +1,7 @@
 LOCAL_PATH:= $(call my-dir)
 include $(CLEAR_VARS)
 
-# files that live under device/pantech/qcom-common/rootdir/etc/
+# files that live under device/pantech/msm8x60-common/rootdir/etc/
 
 include $(CLEAR_VARS)
 LOCAL_MODULE       := init.qcom.early_boot.sh
