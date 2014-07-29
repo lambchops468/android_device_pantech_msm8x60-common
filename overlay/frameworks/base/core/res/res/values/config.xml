@@ -101,7 +101,8 @@
 
     <!-- When true use the linux /dev/input/event subsystem to detect the switch changes
     on the headphone/microphone jack. When false use the older uevent framework -->
-    <bool name="config_useDevInputEventForAudioJack">true</bool>
+    <!-- Pantech presto don't support this value. Add true in your device tree if you need this features -->
+    <bool name="config_useDevInputEventForAudioJack">false</bool>
 
     <!-- Is the device capable of hot swapping an ICC Card -->
     <bool name="config_hotswapCapable">true</bool>
