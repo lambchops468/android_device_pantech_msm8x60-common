@@ -216,9 +216,6 @@ PRODUCT_PACKAGES += libqdutils
 #LIBQDMETADATA
 PRODUCT_PACKAGES += libqdMetaData
 
-#LIBPOWER
-PRODUCT_PACKAGES += power.qcom
-
 #LOC_API
 PRODUCT_PACKAGES += libloc_api-rpc-qc
 
