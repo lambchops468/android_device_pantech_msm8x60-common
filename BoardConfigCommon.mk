@@ -37,13 +37,6 @@ BOARD_CACHEIMAGE_FILE_SYSTEM_TYPE := ext4
 BOARD_HAS_LARGE_FILESYSTEM := true
 BOARD_PERSISTIMAGE_FILE_SYSTEM_TYPE := ext4
 
-# Charger res
-BOARD_CHARGER_RES := device/pantech/msm8x60-common/charger
-
-# Charging mode
-#BOARD_CHARGING_MODE_BOOTING_LPM := /sys/class/power_supply/battery/batt_lp_charging
-#BOARD_BATTERY_DEVICE_NAME := "battery"
-
 # Flags
 COMMON_GLOBAL_CFLAGS += -DQCOM_HARDWARE
 
@@ -65,7 +58,6 @@ TARGET_RECOVERY_PIXEL_FORMAT := "RGBX_8888"
 # Target info
 TARGET_PROVIDES_LIBLIGHT    := true
 TARGET_USERIMAGES_USE_EXT4  := true
-TARGET_USES_CM_POWERHAL     := true 
 
 # Webkit
 ENABLE_WEBGL := true

@@ -216,8 +216,8 @@ PRODUCT_PACKAGES += libqdutils
 #LIBQDMETADATA
 PRODUCT_PACKAGES += libqdMetaData
 
-#LIBPOWER
-PRODUCT_PACKAGES += power.qcom
+#LIBPOWER (CM don't used QCOM power)
+#PRODUCT_PACKAGES += power.qcom
 
 #LOC_API
 PRODUCT_PACKAGES += libloc_api-rpc-qc
@@ -294,10 +294,8 @@ PRODUCT_PACKAGES += \
     minigzip \
     libunz
 
-#Charger
-PRODUCT_PACKAGES += \
-    charger \
-    charger_res_images
+#Charger (Refactor to platform repo)
+#PRODUCT_PACKAGES += charger charger_res_images
 
 #VT_JNI
 #PRODUCT_PACKAGES += libvt_jni
