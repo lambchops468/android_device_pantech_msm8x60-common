@@ -31,8 +31,7 @@ usbchgdisabled=`getprop persist.usb.chgdisabled`
 case "$usbchgdisabled" in
     "") ;; #Do nothing here
     * )
-# TODO(AZL): change to /sys/module/pmic8058_charger_presto/parameters/disabled
-        echo "$usbchgdisabled" > /sys/module/pmic8058_charger/parameters/disabled
+        echo "$usbchgdisabled" > /sys/module/pmic8058_charger_presto/parameters/disabled
 	;;
 esac
 
