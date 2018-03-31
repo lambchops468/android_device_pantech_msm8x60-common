@@ -43,6 +43,7 @@ COMMON_GLOBAL_CFLAGS += -DQCOM_HARDWARE
 # Graphics
 BOARD_EGL_CFG := device/pantech/msm8x60-common/prebuilt/system/lib/egl/egl.cfg
 TARGET_USES_C2D_COMPOSITION := true
+NUM_FRAMEBUFFER_SURFACE_BUFFERS := 3
 TARGET_USES_ION := true
 USE_OPENGL_RENDERER := true
 
